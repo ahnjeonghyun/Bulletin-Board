@@ -17,5 +17,5 @@ from django.urls import path,include
 
 urlpatterns = [
     # path('admins',include('admins.urls')),
-    # path('users',include('users.urls'))
+    path('users',include('users.urls'))
 ]
