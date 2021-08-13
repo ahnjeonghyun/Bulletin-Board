@@ -10,16 +10,58 @@ from django.db        import transaction
 from users.models     import User
 from posts.models     import Post
 
+class SignUpView(View):
+    def post(self,request):
+        try:
+            data     = json.loads(request.body)
+            name     = data['name']
+            password = data['password']
+            email    = data['email']
+            nickname = data['nickname']
+
+            if not name:
+                return JsonResponse({'message':'NOT_INPUT_NAME'},status=400)
+
+            if not password:
+                return JsonResponse({'message':'NOT_INPUT_PASSWORD'},status=400)
+
+            if not email:
+                return JsonResponse({'message':'NOT_INPUT_EMAIL'},status=400)
+
+            if not nickname:
+                return JsonResponse({'message':'NOT_INPUT_NICKNAME'},status=400)
+
+            if not my_settings.EMAIL_CHECK.match(email):
+                return JsonResponse({'message':'INVALID_EMAIL'},status=400)
+            
+            if not my_settings.PASSWORD.match(password):
+                return JsonResponse({'message':'INVALID_PASSWORD'},status=400)
+
+            User.objects.create(
+                name = name,
+                password = password,
+                email = email,
+                nickname = nickname,
+            )
+            return JsonResponse({'message':'SUCCESS'},status=201)
+
+        except KeyError:
+            return JsonResponse({'message':'KEY_ERROR'},status=400)
+
 class UserPostView(View):
     def post(self,request):
         try:
             data = json.loads(request.body)
+            name      = data['name']
             nickname  = data['nickname']
             password  = data['password']
             content   = data['content']
             title     = data['title']
             secret_is = data.get('secret_is',False)
             tag       = data.get('tag',None)
+
+            if not name:
+                return JsonResponse({'message':'NOT_INPUT_NAME'},status=400)
 
             if not nickname:
                 return JsonResponse({'message':'NOT_INPUT_NICKNAME'},status=400)
@@ -35,6 +77,7 @@ class UserPostView(View):
 
             hash_pw = bcrypt.hashpw(password.encode('utf-8'),bcrypt.gensalt()).decode('utf-8')
             User.objects.create(
+                name      = name,
                 nickname  = nickname,
                 password  = hash_pw,
                 content   = content,
