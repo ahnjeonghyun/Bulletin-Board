@@ -6,7 +6,7 @@ from django.test       import Client, TestCase
 
 from unittest.mock     import patch, MagicMock, Mock
 from users.models      import User
-from admins.models     import Admin
+from posts.models      import Post 
 
 class UserPostTest(TestCase):
     def setUp(self):

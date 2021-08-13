@@ -8,7 +8,7 @@ from django.views     import View
 from django.db        import transaction
 
 from users.models     import User
-from admins.models    import Admin
+from posts.models     import Post
 
 class UserPostView(View):
     def post(self,request):
