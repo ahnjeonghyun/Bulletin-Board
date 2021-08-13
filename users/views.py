@@ -10,7 +10,7 @@ from django.db        import transaction
 from users.models     import User
 from admins.models    import Admin
 
-class UserpostView(View):
+class UserPostView(View):
     def post(self,request):
         try:
             data = json.loads(request.body)
@@ -67,3 +67,34 @@ class UserpostView(View):
         }for post in posts ]
 
         return JsonResponse({'data' : answer},status=200)
+
+class UserPostDetailView(View):
+    def get(self, request, post_num = None):
+        user  = User.objects.filter(pk = post_num)
+        admin = Admin.objects.filter(pk = post_num)
+
+        if not post_num:
+            return JsonResponse({'message':'INPUT_ERROR'},status=400)
+        
+        if user.exists():
+            post = user
+            post.first().hits += 1
+        
+        if admin.exists():
+            post = admin
+            post.first().hits += 1
+        
+        else:
+            return JsonResponse({'messsage':'THIS_PAGE_DOES_NOT_EXIST'},status=404)
+
+        data = {
+            'title'      : post.first().title,
+            'content'    : post.first().content,
+            'nickname'   : post.first().nickname,
+            'created_at' : post.first().created_at
+        }
+        post.save()
+
+        return JsonResponse({'data' : data},status=200)
+
+
