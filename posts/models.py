@@ -1,7 +1,7 @@
 from django.db import models
 
 class Post(models.Model):
-    group_id     = models.BigIntegerField(default=0)
+    group_id     = models.BigIntegerField(null=True)
     group_order  = models.IntegerField(default=0)
     group_indent = models.IntegerField(default=0)
     user         = models.ForeignKey('users.User', on_delete=models.CASCADE)
